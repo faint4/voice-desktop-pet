@@ -16,6 +16,8 @@ class ActionSpec:
     return_to: str = "idle"
     interruptible: bool = True
     emotion: str = "neutral"
+    display_name: str = ""
+    menu_order: int = 999
 
     @property
     def interval_ms(self) -> int:
@@ -37,6 +39,8 @@ def load_action_spec(action_dir: Path) -> ActionSpec:
         return_to=str(data.get("return_to", "idle")),
         interruptible=bool(data.get("interruptible", True)),
         emotion=str(data.get("emotion", "neutral")),
+        display_name=str(data.get("display_name", "")),
+        menu_order=int(data.get("menu_order", 999)),
     )
 
 
@@ -45,8 +49,10 @@ def discover_actions(actions_dir: Path) -> list[str]:
 
     if not actions_dir.exists():
         return []
-    return sorted(
+    playable = [
+        path for path in actions_dir.iterdir() if path.is_dir() and any(path.glob("*.png"))
+    ]
+    return [
         path.name
-        for path in actions_dir.iterdir()
-        if path.is_dir() and any(path.glob("*.png"))
-    )
+        for path in sorted(playable, key=lambda path: (load_action_spec(path).menu_order, path.name))
+    ]

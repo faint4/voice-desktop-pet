@@ -6,6 +6,8 @@
   "return_to": "idle",
   "interruptible": true,
   "emotion": "attentive",
-  "description": "subtle attentive lean and sway",
+  "display_name": "聆听",
+  "menu_order": 2,
+  "description": "attentive listening pose",
   "generator": "tools/generate_motion_pack.py"
 }

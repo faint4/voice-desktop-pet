@@ -1,0 +1,13 @@
+{
+  "id": "think",
+  "fps": 24,
+  "frame_count": 72,
+  "loop": true,
+  "return_to": "idle",
+  "interruptible": true,
+  "emotion": "thoughtful",
+  "display_name": "思考",
+  "menu_order": 3,
+  "description": "contemplative pose",
+  "generator": "tools/generate_motion_pack.py"
+}

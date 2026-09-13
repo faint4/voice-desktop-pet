@@ -1,0 +1,13 @@
+{
+  "id": "nod",
+  "fps": 24,
+  "frame_count": 48,
+  "loop": false,
+  "return_to": "idle",
+  "interruptible": true,
+  "emotion": "affirmative",
+  "display_name": "点头",
+  "menu_order": 5,
+  "description": "gentle affirmative nod",
+  "generator": "tools/generate_motion_pack.py"
+}

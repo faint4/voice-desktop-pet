@@ -104,7 +104,10 @@ class PetWindow(QWidget):
         actions = discover_actions(self.actions_dir)
         for action in actions:
             shortcut = known_shortcuts.get(action)
-            label = f"{shortcut}: {action}" if shortcut is not None else action
+            spec = load_action_spec(self.actions_dir / action)
+            display_name = spec.display_name or action
+            action_label = f"{display_name} ({action})" if display_name != action else action
+            label = f"{shortcut}: {action_label}" if shortcut is not None else action_label
             item = QAction(label, menu)
             item.triggered.connect(lambda _checked=False, name=action: self.set_action(name))
             menu.addAction(item)

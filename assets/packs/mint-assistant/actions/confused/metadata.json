@@ -1,0 +1,13 @@
+{
+  "id": "confused",
+  "fps": 24,
+  "frame_count": 72,
+  "loop": false,
+  "return_to": "idle",
+  "interruptible": true,
+  "emotion": "confused",
+  "display_name": "疑惑",
+  "menu_order": 9,
+  "description": "friendly puzzled reaction",
+  "generator": "tools/generate_motion_pack.py"
+}
