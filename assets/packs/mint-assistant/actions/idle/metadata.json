@@ -6,6 +6,8 @@
   "return_to": "idle",
   "interruptible": true,
   "emotion": "neutral",
+  "display_name": "待机",
+  "menu_order": 1,
   "description": "gentle breathing and weight shift",
   "generator": "tools/generate_motion_pack.py"
 }

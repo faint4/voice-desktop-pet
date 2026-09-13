@@ -1,0 +1,13 @@
+{
+  "id": "wave",
+  "fps": 24,
+  "frame_count": 72,
+  "loop": false,
+  "return_to": "idle",
+  "interruptible": true,
+  "emotion": "happy",
+  "display_name": "挥手",
+  "menu_order": 6,
+  "description": "friendly greeting wave",
+  "generator": "tools/generate_motion_pack.py"
+}

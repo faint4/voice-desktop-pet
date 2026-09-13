@@ -1,0 +1,13 @@
+{
+  "id": "comfort",
+  "fps": 24,
+  "frame_count": 72,
+  "loop": false,
+  "return_to": "idle",
+  "interruptible": true,
+  "emotion": "caring",
+  "display_name": "安慰",
+  "menu_order": 10,
+  "description": "reassuring gesture",
+  "generator": "tools/generate_motion_pack.py"
+}

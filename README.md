@@ -27,7 +27,7 @@ py -m voice_desktop_pet.player --actions-dir assets/actions
 
 ## M2.1 AI 角色演示
 
-项目包含原创的 Mint Assistant 透明角色母图，以及由同一母图生成的三套身份稳定动作：待机、聆听和说话。双击 `tools/run-mint-demo.cmd`，或执行：
+项目包含原创的 Mint Assistant 透明角色母图，以及以该角色为身份参考生成的完整动作包。右键菜单可对照预览待机、聆听、思考、说话、点头、挥手、开心、惊讶、疑惑、安慰和告别。双击 `tools/run-mint-demo.cmd`，或执行：
 
 ```powershell
 uv run python -m voice_desktop_pet.player `
@@ -42,6 +42,7 @@ uv run python -m voice_desktop_pet.player `
 
 - [开发与测试计划](docs/DEVELOPMENT_PLAN.md)
 - [M2.1 AI 角色与核心动作](docs/M2_1_AI_CHARACTER.md)
+- [M2.2 完整动作包与右键菜单](docs/M2_2_FULL_ACTION_PACK.md)
 - [动作协议](docs/ACTION_PROTOCOL.md)
 - [MVP 验收清单](docs/MVP_ACCEPTANCE.md)
 

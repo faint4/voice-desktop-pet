@@ -12,9 +12,17 @@ CANVAS = (360, 640)
 FPS = 24
 
 ACTION_CONFIG = {
-    "idle": {"seconds": 4, "emotion": "neutral", "description": "gentle breathing and weight shift"},
-    "listen": {"seconds": 3, "emotion": "attentive", "description": "subtle attentive lean and sway"},
-    "speak": {"seconds": 3, "emotion": "engaged", "description": "conversational body rhythm"},
+    "idle": {"seconds": 4, "loop": True, "emotion": "neutral", "display_name": "待机", "description": "gentle breathing and weight shift"},
+    "listen": {"seconds": 3, "loop": True, "emotion": "attentive", "display_name": "聆听", "description": "attentive listening pose"},
+    "think": {"seconds": 3, "loop": True, "emotion": "thoughtful", "display_name": "思考", "description": "contemplative pose"},
+    "speak": {"seconds": 3, "loop": True, "emotion": "engaged", "display_name": "说话", "description": "conversational gesture"},
+    "nod": {"seconds": 2, "loop": False, "emotion": "affirmative", "display_name": "点头", "description": "gentle affirmative nod"},
+    "wave": {"seconds": 3, "loop": False, "emotion": "happy", "display_name": "挥手", "description": "friendly greeting wave"},
+    "happy": {"seconds": 3, "loop": False, "emotion": "happy", "display_name": "开心", "description": "joyful reaction"},
+    "surprised": {"seconds": 2, "loop": False, "emotion": "surprised", "display_name": "惊讶", "description": "pleasant surprise"},
+    "confused": {"seconds": 3, "loop": False, "emotion": "confused", "display_name": "疑惑", "description": "friendly puzzled reaction"},
+    "comfort": {"seconds": 3, "loop": False, "emotion": "caring", "display_name": "安慰", "description": "reassuring gesture"},
+    "goodbye": {"seconds": 3, "loop": False, "emotion": "happy", "display_name": "告别", "description": "friendly farewell wave"},
 }
 
 
@@ -26,6 +34,24 @@ def render_transform(subject: Image.Image, phase: float, action: str) -> Image.I
     elif action == "listen":
         scale_x, scale_y = 1.003, 1.003
         rotation, x_shift, y_shift = 0.8 + 0.35 * wave, 2.0 + 0.8 * wave, -1.5
+    elif action in {"think", "confused"}:
+        scale_x, scale_y = 1.001, 1.001
+        rotation, x_shift, y_shift = 0.45 * wave, 0.8 * wave, -0.5
+    elif action in {"happy", "surprised"}:
+        pulse = math.sin(phase * math.pi)
+        scale_x, scale_y = 1.0 + 0.008 * pulse, 1.0 + 0.008 * pulse
+        rotation, x_shift, y_shift = 0.15 * wave, 0.3 * wave, -4.0 * pulse
+    elif action in {"wave", "goodbye"}:
+        scale_x, scale_y = 1.0, 1.0
+        rotation, x_shift, y_shift = 0.55 * wave, 1.1 * wave, -0.5
+    elif action == "nod":
+        pulse = math.sin(phase * math.pi)
+        scale_x, scale_y = 1.0, 1.0 - 0.006 * pulse
+        rotation, x_shift, y_shift = 0.0, 0.0, 2.0 * pulse
+    elif action == "comfort":
+        pulse = math.sin(phase * math.pi)
+        scale_x, scale_y = 1.0 + 0.004 * pulse, 1.0 + 0.004 * pulse
+        rotation, x_shift, y_shift = 0.15 * wave, 0.5 * wave, -1.0 * pulse
     else:
         scale_x, scale_y = 1.0 + 0.002 * wave, 1.0 + 0.005 * wave
         rotation, x_shift, y_shift = 0.32 * wave, 1.2 * wave, -1.2 * abs(wave)
@@ -68,10 +94,12 @@ def build_action(subject: Image.Image, output_root: Path, action: str, config: d
         "id": action,
         "fps": FPS,
         "frame_count": frame_count,
-        "loop": True,
+        "loop": config["loop"],
         "return_to": "idle",
         "interruptible": True,
         "emotion": config["emotion"],
+        "display_name": config["display_name"],
+        "menu_order": config["menu_order"],
         "description": config["description"],
         "generator": "tools/generate_motion_pack.py",
     }
@@ -84,11 +112,15 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--master", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--poses-dir", type=Path)
     args = parser.parse_args()
 
     master = Image.open(args.master).convert("RGBA")
-    subject = prepare_subject(master)
-    for action, config in ACTION_CONFIG.items():
+    for menu_order, (action, config) in enumerate(ACTION_CONFIG.items(), start=1):
+        config["menu_order"] = menu_order
+        pose_path = args.poses_dir / f"{action}.png" if args.poses_dir else None
+        pose = Image.open(pose_path).convert("RGBA") if pose_path and pose_path.exists() else master
+        subject = prepare_subject(pose)
         build_action(subject, args.output, action, config)
 
 

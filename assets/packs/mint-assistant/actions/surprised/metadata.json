@@ -1,0 +1,13 @@
+{
+  "id": "surprised",
+  "fps": 24,
+  "frame_count": 48,
+  "loop": false,
+  "return_to": "idle",
+  "interruptible": true,
+  "emotion": "surprised",
+  "display_name": "惊讶",
+  "menu_order": 8,
+  "description": "pleasant surprise",
+  "generator": "tools/generate_motion_pack.py"
+}

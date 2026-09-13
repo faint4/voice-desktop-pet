@@ -1,0 +1,13 @@
+{
+  "id": "happy",
+  "fps": 24,
+  "frame_count": 72,
+  "loop": false,
+  "return_to": "idle",
+  "interruptible": true,
+  "emotion": "happy",
+  "display_name": "开心",
+  "menu_order": 7,
+  "description": "joyful reaction",
+  "generator": "tools/generate_motion_pack.py"
+}
