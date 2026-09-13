@@ -1,0 +1,11 @@
+{
+  "id": "speak",
+  "fps": 24,
+  "frame_count": 72,
+  "loop": true,
+  "return_to": "idle",
+  "interruptible": true,
+  "emotion": "engaged",
+  "description": "conversational body rhythm",
+  "generator": "tools/generate_motion_pack.py"
+}

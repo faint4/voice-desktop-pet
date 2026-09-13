@@ -1,0 +1,11 @@
+{
+  "id": "idle",
+  "fps": 24,
+  "frame_count": 96,
+  "loop": true,
+  "return_to": "idle",
+  "interruptible": true,
+  "emotion": "neutral",
+  "description": "gentle breathing and weight shift",
+  "generator": "tools/generate_motion_pack.py"
+}

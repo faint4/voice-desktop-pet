@@ -9,15 +9,18 @@ from PySide6.QtCore import QPoint, Qt, QTimer
 from PySide6.QtGui import QAction, QPixmap
 from PySide6.QtWidgets import QApplication, QLabel, QMenu, QWidget
 
+from .actions import ActionSpec, discover_actions, load_action_spec
+
 
 class PetWindow(QWidget):
     FPS = 24
-    ACTION_KEYS = {Qt.Key_1: "idle", Qt.Key_2: "listen", Qt.Key_3: "wave", Qt.Key_4: "speak"}
+    ACTION_KEYS = {Qt.Key_1: "idle", Qt.Key_2: "listen", Qt.Key_3: "speak", Qt.Key_4: "wave"}
 
     def __init__(self, actions_dir: Path, scale: float = 1.0, initial_action: str = "idle") -> None:
         super().__init__()
         self.actions_dir, self.scale = actions_dir, max(0.1, min(scale, 3.0))
         self.action, self.frames, self.index = "idle", [], 0
+        self.spec = ActionSpec(name="idle")
         self.drag_origin: QPoint | None = None
         self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint | Qt.Tool)
         self.setAttribute(Qt.WA_TranslucentBackground, True)
@@ -29,7 +32,7 @@ class PetWindow(QWidget):
         self.timer.timeout.connect(self.next_frame)
         self.set_action(initial_action)
         self.move_to_work_area()
-        self.timer.start(round(1000 / self.FPS))
+        self.timer.start(self.spec.interval_ms)
 
     def move_to_work_area(self) -> None:
         screen = QApplication.primaryScreen()
@@ -38,12 +41,15 @@ class PetWindow(QWidget):
             self.move(area.right() - self.width() - 32, area.bottom() - self.height() - 32)
 
     def set_action(self, action: str) -> None:
-        frames = sorted((self.actions_dir / action).glob("*.png"))
+        action_dir = self.actions_dir / action
+        frames = sorted(action_dir.glob("*.png"))
         if not frames:
             if action != "idle":
                 self.set_action("idle")
             return
+        self.spec = load_action_spec(action_dir)
         self.action, self.frames, self.index = action, [QPixmap(str(p)) for p in frames], 0
+        self.timer.setInterval(self.spec.interval_ms)
         self.resize_to_frame()
         self.show_frame()
 
@@ -61,7 +67,13 @@ class PetWindow(QWidget):
 
     def next_frame(self) -> None:
         if self.frames:
-            self.index = (self.index + 1) % len(self.frames)
+            if self.index + 1 >= len(self.frames):
+                if not self.spec.loop:
+                    self.set_action(self.spec.return_to)
+                    return
+                self.index = 0
+            else:
+                self.index += 1
             self.show_frame()
 
     def mousePressEvent(self, event) -> None:  # noqa: N802
@@ -89,7 +101,7 @@ class PetWindow(QWidget):
     def context_menu(self, position: QPoint) -> None:
         menu = QMenu(self)
         known_shortcuts = {action: key - Qt.Key_0 for key, action in self.ACTION_KEYS.items()}
-        actions = sorted(path.name for path in self.actions_dir.iterdir() if path.is_dir())
+        actions = discover_actions(self.actions_dir)
         for action in actions:
             shortcut = known_shortcuts.get(action)
             label = f"{shortcut}: {action}" if shortcut is not None else action
@@ -106,10 +118,28 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--actions-dir", type=Path, default=Path("assets/actions"))
     parser.add_argument("--scale", type=float, default=1.0)
     parser.add_argument("--initial-action", default="idle")
+    parser.add_argument(
+        "--demo",
+        action="store_true",
+        help="Cycle through idle/listen/speak to demonstrate interaction states.",
+    )
     args = parser.parse_args(argv)
     app = QApplication(sys.argv)
     window = PetWindow(args.actions_dir, args.scale, args.initial_action)
     window.show()
+    if args.demo:
+        demo_actions = [name for name in ("idle", "listen", "speak") if name in discover_actions(args.actions_dir)]
+        if demo_actions:
+            demo_index = 0
+            demo_timer = QTimer(window)
+
+            def advance_demo() -> None:
+                nonlocal demo_index
+                demo_index = (demo_index + 1) % len(demo_actions)
+                window.set_action(demo_actions[demo_index])
+
+            demo_timer.timeout.connect(advance_demo)
+            demo_timer.start(4000)
     return app.exec()
 
 
