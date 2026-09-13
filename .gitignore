@@ -1,0 +1,11 @@
+.venv/
+.uv-cache/
+__pycache__/
+*.egg-info/
+
+# Local source footage, downloaded research code, models, and portable binaries.
+assets/source/
+assets/actions/human-wave/
+desktopgirls-source/
+tools/ffmpeg-portable/
+tools/*.zip

@@ -23,11 +23,25 @@ py -m pip install -e .
 py -m voice_desktop_pet.player --actions-dir assets/actions
 ```
 
-快捷键：`1` 待机、`2` 聆听、`3` 挥手、`4` 说话；空格暂停/恢复；`Esc` 退出。左键拖动，右键打开动作菜单。
+快捷键：`1` 待机、`2` 聆听、`3` 说话、`4` 挥手；空格暂停/恢复；`Esc` 退出。左键拖动，右键打开动作菜单。
+
+## M2.1 AI 角色演示
+
+项目包含原创的 Mint Assistant 透明角色母图，以及由同一母图生成的三套身份稳定动作：待机、聆听和说话。双击 `tools/run-mint-demo.cmd`，或执行：
+
+```powershell
+uv run python -m voice_desktop_pet.player `
+  --actions-dir assets\packs\mint-assistant\actions `
+  --initial-action idle `
+  --demo
+```
+
+演示会每四秒自动切换 `idle → listen → speak`。也可以按 `1`、`2`、`3` 手动切换，按空格暂停或恢复，按 `Esc` 退出。
 
 ## 文档
 
 - [开发与测试计划](docs/DEVELOPMENT_PLAN.md)
+- [M2.1 AI 角色与核心动作](docs/M2_1_AI_CHARACTER.md)
 - [动作协议](docs/ACTION_PROTOCOL.md)
 - [MVP 验收清单](docs/MVP_ACCEPTANCE.md)
 
