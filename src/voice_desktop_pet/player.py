@@ -14,7 +14,7 @@ class PetWindow(QWidget):
     FPS = 24
     ACTION_KEYS = {Qt.Key_1: "idle", Qt.Key_2: "listen", Qt.Key_3: "wave", Qt.Key_4: "speak"}
 
-    def __init__(self, actions_dir: Path, scale: float = 1.0) -> None:
+    def __init__(self, actions_dir: Path, scale: float = 1.0, initial_action: str = "idle") -> None:
         super().__init__()
         self.actions_dir, self.scale = actions_dir, max(0.1, min(scale, 3.0))
         self.action, self.frames, self.index = "idle", [], 0
@@ -27,7 +27,7 @@ class PetWindow(QWidget):
         self.label.setAlignment(Qt.AlignCenter)
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.next_frame)
-        self.set_action("idle")
+        self.set_action(initial_action)
         self.move_to_work_area()
         self.timer.start(round(1000 / self.FPS))
 
@@ -88,8 +88,12 @@ class PetWindow(QWidget):
 
     def context_menu(self, position: QPoint) -> None:
         menu = QMenu(self)
-        for key, action in self.ACTION_KEYS.items():
-            item = QAction(f"{key - Qt.Key_0}: {action}", menu)
+        known_shortcuts = {action: key - Qt.Key_0 for key, action in self.ACTION_KEYS.items()}
+        actions = sorted(path.name for path in self.actions_dir.iterdir() if path.is_dir())
+        for action in actions:
+            shortcut = known_shortcuts.get(action)
+            label = f"{shortcut}: {action}" if shortcut is not None else action
+            item = QAction(label, menu)
             item.triggered.connect(lambda _checked=False, name=action: self.set_action(name))
             menu.addAction(item)
         menu.addSeparator()
@@ -101,9 +105,10 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--actions-dir", type=Path, default=Path("assets/actions"))
     parser.add_argument("--scale", type=float, default=1.0)
+    parser.add_argument("--initial-action", default="idle")
     args = parser.parse_args(argv)
     app = QApplication(sys.argv)
-    window = PetWindow(args.actions_dir, args.scale)
+    window = PetWindow(args.actions_dir, args.scale, args.initial_action)
     window.show()
     return app.exec()
 
