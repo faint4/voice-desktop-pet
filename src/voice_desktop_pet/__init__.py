@@ -1,0 +1,1 @@
+"""Voice Desktop Pet package."""

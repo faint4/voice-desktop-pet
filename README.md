@@ -12,6 +12,19 @@
 - 先用本地按钮 / 快捷键模拟事件
 - 后续接入语音识别、LLM、TTS
 
+## M1 本地运行
+
+需要 Windows 10/11、Python 3.11+ 和透明 PNG 帧。先准备 `assets/actions` 下的动作目录，然后执行：
+
+```powershell
+py -m venv .venv
+.\.venv\Scripts\Activate.ps1
+py -m pip install -e .
+py -m voice_desktop_pet.player --actions-dir assets/actions
+```
+
+快捷键：`1` 待机、`2` 聆听、`3` 挥手、`4` 说话；空格暂停/恢复；`Esc` 退出。左键拖动，右键打开动作菜单。
+
 ## 文档
 
 - [开发与测试计划](docs/DEVELOPMENT_PLAN.md)

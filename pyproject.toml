@@ -1,0 +1,13 @@
+[project]
+name = "voice-desktop-pet"
+version = "0.1.0"
+description = "Windows transparent voice desktop pet prototype"
+requires-python = ">=3.11"
+dependencies = ["PySide6>=6.7"]
+
+[project.scripts]
+voice-desktop-pet = "voice_desktop_pet.player:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
